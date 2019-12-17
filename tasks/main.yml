@@ -1,0 +1,89 @@
+# Standards: 0.1
+---
+- name: Fact appcleaner user
+  set_fact:
+    appcleaner_user: "{{ appcleaner_user | default(homebrew_user) | default(ansible_user_id) }}"
+  tags:
+    - appcleaner
+
+- become: "{{ (appcleaner_user != ansible_user_id) | bool }}"
+  become_user: "{{ appcleaner_user }}"
+  block:
+    - name: Install required package
+      homebrew_cask:
+        name: appcleaner
+        greedy: True
+        options: appdir=/Applications
+        accept_external_apps: False
+        state: upgraded
+      tags:
+        - appcleaner
+
+    - name: Remove quarantine flag
+      register: appcleaner_quarantine
+      failed_when: appcleaner_quarantine.rc != 0 and "No such xattr" not in appcleaner_quarantine.stderr
+      changed_when: appcleaner_quarantine.rc == 0
+      command: xattr -d com.apple.quarantine /Applications/AppCleaner.app
+      tags:
+        - appcleaner
+
+    - name: Has launched before
+      notify:
+        - Kill appcleaner
+        - Start appcleaner
+      osx_defaults:
+        domain: net.freemacsoft.AppCleaner
+        key: SUHasLaunchedBefore
+        type: bool
+        value: True
+        state: present
+      tags:
+        - appcleaner
+
+    - name: Automatically update
+      notify:
+        - Kill appcleaner
+        - Start appcleaner
+      osx_defaults:
+        domain: net.freemacsoft.AppCleaner
+        key: SUAutomaticallyUpdate
+        type: bool
+        value: "{{ appcleaner_automatically_update }}"
+        state: present
+      tags:
+        - appcleaner
+
+    - name: Enable automatic checks
+      notify:
+        - Kill appcleaner
+        - Start appcleaner
+      osx_defaults:
+        domain: net.freemacsoft.AppCleaner
+        key: SUEnableAutomaticChecks
+        type: bool
+        value: "{{ appcleaner_enable_automatic_check }}"
+        state: present
+      tags:
+        - appcleaner
+
+    - name: Protect opened apps
+      notify:
+        - Kill appcleaner
+        - Start appcleaner
+      osx_defaults:
+        domain: net.freemacsoft.AppCleaner
+        key: SUEnableAutomaticChecks
+        type: bool
+        value: "{{ appcleaner_protect_opened_apps }}"
+        state: present
+      tags:
+        - appcleaner
+
+    - name: Start background application
+      when: appcleaner_started
+      changed_when: False
+      command: open -j /Applications/AppCleaner.app
+      tags:
+        - appcleaner
+
+...

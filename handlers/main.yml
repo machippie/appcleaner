@@ -1,0 +1,16 @@
+# Standards: 0.1
+---
+- name: Kill appcleaner
+  command: killall AppCleaner
+  register: appcleaner_kill
+  failed_when: appcleaner_kill.rc != 0 and "No matching processes belonging to you were found" not in appcleaner_kill.stderr
+  become: "{{ (appcleaner_user != ansible_user_id) | bool }}"
+  become_user: "{{ appcleaner_user }}"
+
+- name: Start appcleaner
+  when: appcleaner_started
+  command: open -j /Applications/AppCleaner.app
+  become: "{{ (appcleaner_user != ansible_user_id) | bool }}"
+  become_user: "{{ appcleaner_user }}"
+
+...

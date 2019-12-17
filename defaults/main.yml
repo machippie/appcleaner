@@ -1,0 +1,19 @@
+# Standards: 0.1
+---
+# @var appcleaner_user:description: User to run user-specific commands
+# @var appcleaner_user:value: appcleaner_user | default(homebrew_user) | default(ansible_user_id)
+# appcleaner_user:
+
+# @var appcleaner_automatically_update:description: Automatically update
+appcleaner_automatically_update: True
+
+# @var appcleaner_enable_automatic_check:description: Enable automatic checks
+appcleaner_enable_automatic_check: True
+
+# @var appcleaner_protect_opened_apps:description: Protect opened apps
+appcleaner_protect_opened_apps: False
+
+# @var appcleaner_started:description: Start in background after install
+appcleaner_started: True
+
+...
