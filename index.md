@@ -33,12 +33,12 @@ appcleaner_protect_opened_apps: false
 
 ### appcleaner_started
 
-Start in background after install
+Restart app if already running
 
 #### Default value
 
 ```yaml
-appcleaner_started: true
+appcleaner_started: false
 ```
 
 ### appcleaner_user
