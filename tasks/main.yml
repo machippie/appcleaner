@@ -6,10 +6,17 @@
   tags:
     - appcleaner
 
+- name: Install psutil package
+  pip:
+    name: psutil
+  tags:
+    - appcleaner
+
 - become: "{{ (appcleaner_user != ansible_user_id) | bool }}"
   become_user: "{{ appcleaner_user }}"
   block:
     - name: Install required package
+      ignore_errors: True
       homebrew_cask:
         name: appcleaner
         greedy: True
@@ -24,6 +31,20 @@
       failed_when: appcleaner_quarantine.rc != 0 and "No such xattr" not in appcleaner_quarantine.stderr
       changed_when: appcleaner_quarantine.rc == 0
       command: xattr -d com.apple.quarantine /Applications/AppCleaner.app
+      tags:
+        - appcleaner
+
+    - name: Check program running
+      register: appcleaner_process_running
+      pids:
+        name: AppCleaner
+      tags:
+        - appcleaner
+
+    - name: Fact program running
+      register: appcleaner_running
+      set_fact:
+        appcleaner_started: "{{ appcleaner_running.pids | length > 0 }}}"
       tags:
         - appcleaner
 
@@ -76,13 +97,6 @@
         type: bool
         value: "{{ appcleaner_protect_opened_apps }}"
         state: present
-      tags:
-        - appcleaner
-
-    - name: Start background application
-      when: appcleaner_started
-      changed_when: False
-      command: open -j /Applications/AppCleaner.app
       tags:
         - appcleaner
 

@@ -9,7 +9,7 @@
 
 - name: Start appcleaner
   when: appcleaner_started
-  command: open -j /Applications/AppCleaner.app
+  command: open -g /Applications/AppCleaner.app
   become: "{{ (appcleaner_user != ansible_user_id) | bool }}"
   become_user: "{{ appcleaner_user }}"
 
