@@ -39,7 +39,7 @@
       check_mode: False
       failed_when: False
       changed_when: appcleaner_running.stdout | length > 0 | bool
-      command: pidof AppCleaner
+      command: /usr/local/bin/pidof AppCleaner
       tags:
         - appcleaner
 
