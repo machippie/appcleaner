@@ -1,36 +1,6 @@
 
 ## Default Variables
 
-### appcleaner_automatically_update
-
-Automatically update
-
-#### Default value
-
-```yaml
-appcleaner_automatically_update: true
-```
-
-### appcleaner_enable_automatic_check
-
-Enable automatic checks
-
-#### Default value
-
-```yaml
-appcleaner_enable_automatic_check: true
-```
-
-### appcleaner_protect_opened_apps
-
-Protect opened apps
-
-#### Default value
-
-```yaml
-appcleaner_protect_opened_apps: false
-```
-
 ### appcleaner_started
 
 Restart app if already running
